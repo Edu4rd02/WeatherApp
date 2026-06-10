@@ -43,4 +43,20 @@
         android:textSize="18sp"
         android:layout_marginTop="8dp" />
 
+    <TextView
+        android:id="@+id/tvWindSpeed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wind Speed: --"
+        android:textSize="18sp"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/tvHumidity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Humidity: --"
+        android:textSize="18sp"
+        android:layout_marginTop="8dp" />
+
 </LinearLayout>

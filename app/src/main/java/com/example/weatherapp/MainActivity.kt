@@ -47,8 +47,10 @@ class MainActivity : AppCompatActivity() {
                     val weather = response.body()
                     if (weather != null) {
                         binding.tvCity.text = "City: ${weather.name}"
-                        binding.tvTemperature.text = "Temperature: ${weather.main.temp} C"
+                        binding.tvTemperature.text = "Temperature: ${weather.main.temp} °C"
                         binding.tvDescription.text = "Weather: ${weather.weather[0].description}"
+                        binding.tvWindSpeed.text = "Wind Speed: ${weather.wind.speed} m/s"
+                        binding.tvHumidity.text = "Humidity: ${weather.main.humidity}%"
                     } else {
                         Toast.makeText(
                             this@MainActivity,
