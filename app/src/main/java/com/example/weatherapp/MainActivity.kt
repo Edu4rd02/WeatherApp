@@ -3,6 +3,7 @@ package com.example.weatherapp
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
 import androidx.lifecycle.lifecycleScope
 import com.example.weatherapp.data.FeedbackRequest
 import com.example.weatherapp.databinding.ActivityMainBinding
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        RetrofitClient.init(context = this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -48,7 +50,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchWeather(city: String) {
-
+        binding.progressBar.isGone = false
+        binding.btnGetWeather.isEnabled = false
         // LifecycleScope <- coroutine scope tied to this activity
         lifecycleScope.launch {
             try {
@@ -82,10 +85,16 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+            finally {
+                binding.progressBar.isGone = true
+                binding.btnGetWeather.isEnabled = true
+            }
         }
     }
 
     private fun submitFeedback(city: String, rating: Int, comment: String){
+        binding.progressBarFeedback.isGone = false
+        binding.btnSubmitFeedback.isEnabled = false
         lifecycleScope.launch{
             try {
                 val response = withContext(Dispatchers.IO){
@@ -110,6 +119,10 @@ class MainActivity : AppCompatActivity() {
                     "Error: ${e.localizedMessage}",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+            finally {
+                binding.progressBarFeedback.isGone = true
+                binding.btnSubmitFeedback.isEnabled = true
             }
         }
     }
