@@ -19,4 +19,6 @@ object AppConstants {
     // "imperial" = Fahrenheit, wind in mph
     // "standard" = Kelvin (default if omitted — 300K feels very hot!)
     const val UNITS = "metric"
+
+    const val FEEDBACK_BASE_URL = "https://mock.apidog.com/m1/1311225-1311101-default/"
 }

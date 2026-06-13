@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.weatherapp.data.FeedbackRequest
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.example.weatherapp.network.AppConstants
 import com.example.weatherapp.network.RetrofitClient
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private lateinit var binding: ActivityMainBinding
+    private var currentCity: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +29,21 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter a city name", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            currentCity = city
             fetchWeather(city)
+        }
+        binding.btnSubmitFeedback.setOnClickListener {
+            if (currentCity.isEmpty()){
+                Toast.makeText(this, "Please fetch weather for a city first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val rating = binding.ratingBar.rating.toInt()
+            val comment = binding.etComment.text.toString().trim()
+            if (comment.isEmpty()){
+                Toast.makeText(this, "Please leave a comment!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            submitFeedback(currentCity, rating, comment)
         }
     }
 
@@ -58,6 +74,35 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@MainActivity,
+                    "Error: ${e.localizedMessage}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun submitFeedback(city: String, rating: Int, comment: String){
+        lifecycleScope.launch{
+            try {
+                val response = withContext(Dispatchers.IO){
+                    RetrofitClient.feedbackApiService.submitFeedback(
+                        request = FeedbackRequest(
+                            city = city,
+                            rating = rating,
+                            comment = comment
+                        )
+                    )
+                }
+                if (response.isSuccessful){
+                    binding.etComment.text.clear()
+                    binding.ratingBar.rating = 3f
+                    binding.tvFeedbackResult.text = "Feedback submitted successfully!"
+                } else {
+                    binding.tvFeedbackResult.text = "Failed to submit feedback: ${response.message()}"
                 }
             } catch (e: Exception) {
                 Toast.makeText(
